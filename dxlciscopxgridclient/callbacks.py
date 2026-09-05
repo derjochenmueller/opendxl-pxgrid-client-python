@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import base64
+import binascii
 import json
 from dxlbootstrap.util import MessageUtils
 from dxlclient.callbacks import EventCallback
@@ -14,7 +15,8 @@ class CallbackHelper:
                 try:
                     decoded_content = base64.b64decode(content).decode('utf-8')
                     event_dict['content'] = json.loads(decoded_content)
-                except (TypeError, base64.binascii.Error):
+                except (TypeError, ValueError, binascii.Error):
+                    # Not base64-encoded JSON: leave the content untouched
                     pass
         return event_dict
 
